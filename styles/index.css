@@ -356,7 +356,7 @@ body {
 .gallery-screenshot {
     flex: 0 0 auto;
     width: 120px;
-    height: 240px;
+    height: 280px;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -376,11 +376,10 @@ body {
     user-drag: none;
 }
 
-/* Mobile adjustments for gallery */
 @media (max-width: 768px) {
     .gallery-screenshot {
         width: 90px;
-        height: 160px;
+        height: 210px;
     }
     
     .screenshot-gallery {
