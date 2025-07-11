@@ -73,6 +73,7 @@ function createGallery(screenshots) {
         img.src = screenshot.src;
         img.alt = screenshot.alt;
         img.loading = 'lazy'; // Lazy load for performance
+        img.draggable = false; // Prevent image dragging
         
         screenshotDiv.appendChild(img);
         galleryContainer.appendChild(screenshotDiv);
@@ -88,8 +89,9 @@ function createGallery(screenshots) {
 function calculateMaxOffset() {
     if (!galleryContainer || screenshots.length === 0) return;
     
-    const containerWidth = galleryContainer.parentElement.offsetWidth - 32; // Account for padding
-    const screenshotWidth = 80; // Base width
+    const gallery = galleryContainer.parentElement;
+    const containerWidth = gallery.offsetWidth - 32; // Account for padding
+    const screenshotWidth = 120; // Updated width for portrait
     const gap = 16; // 1rem gap
     const totalWidth = screenshots.length * (screenshotWidth + gap) - gap;
     
@@ -112,7 +114,6 @@ function handleGalleryStart(e) {
     
     if (galleryContainer) {
         galleryContainer.style.transition = 'none';
-        galleryContainer.style.cursor = 'grabbing';
     }
 }
 
@@ -124,8 +125,13 @@ function handleGalleryMove(e) {
     const diffX = startX - currentX;
     const newOffset = currentOffset + diffX;
     
-    // Constrain to bounds
-    const constrainedOffset = Math.max(0, Math.min(newOffset, maxOffset));
+    // Constrain to bounds with some elasticity
+    let constrainedOffset = newOffset;
+    if (newOffset < 0) {
+        constrainedOffset = newOffset * 0.3; // Elastic effect at start
+    } else if (newOffset > maxOffset) {
+        constrainedOffset = maxOffset + (newOffset - maxOffset) * 0.3; // Elastic effect at end
+    }
     
     if (galleryContainer) {
         galleryContainer.style.transform = `translateX(-${constrainedOffset}px)`;
@@ -137,11 +143,9 @@ function handleGalleryEnd() {
     
     isDragging = false;
     const diffX = startX - currentX;
-    const threshold = 30;
     
     if (galleryContainer) {
         galleryContainer.style.transition = 'transform 0.3s ease';
-        galleryContainer.style.cursor = 'grab';
     }
     
     // Update current offset based on drag
@@ -168,25 +172,35 @@ async function initializeGallery() {
 }
 
 function setupGalleryEvents() {
-    if (!galleryContainer) return;
+    const gallery = document.querySelector('.screenshot-gallery');
+    if (!gallery) return;
     
-    // Mouse events
-    galleryContainer.addEventListener('mousedown', handleGalleryStart);
+    // Mouse events on the gallery container, not individual images
+    gallery.addEventListener('mousedown', handleGalleryStart);
     document.addEventListener('mousemove', handleGalleryMove);
     document.addEventListener('mouseup', handleGalleryEnd);
     
     // Touch events
-    galleryContainer.addEventListener('touchstart', handleGalleryStart, { passive: false });
+    gallery.addEventListener('touchstart', handleGalleryStart, { passive: false });
     document.addEventListener('touchmove', handleGalleryMove, { passive: false });
     document.addEventListener('touchend', handleGalleryEnd);
     
     // Prevent context menu
-    galleryContainer.addEventListener('contextmenu', e => e.preventDefault());
+    gallery.addEventListener('contextmenu', e => e.preventDefault());
     
     // Recalculate on window resize
     window.addEventListener('resize', () => {
         calculateMaxOffset();
         currentOffset = Math.min(currentOffset, maxOffset);
+        updateGalleryPosition();
+    });
+    
+    // Mouse wheel scrolling
+    gallery.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const scrollAmount = e.deltaY > 0 ? 50 : -50;
+        currentOffset = Math.max(0, Math.min(currentOffset + scrollAmount, maxOffset));
+        galleryContainer.style.transition = 'transform 0.2s ease';
         updateGalleryPosition();
     });
 }
