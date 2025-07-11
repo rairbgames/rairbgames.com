@@ -1,5 +1,10 @@
-// Dynamic Screenshot Gallery Loader
+// Dynamic Screenshot Gallery Loader with Drag/Swipe
 let screenshots = [];
+let currentOffset = 0;
+let isDragging = false;
+let startX = 0;
+let currentX = 0;
+let maxOffset = 0;
 
 const galleryContainer = document.getElementById('galleryContainer');
 
@@ -69,22 +74,79 @@ function createGallery(screenshots) {
         img.alt = screenshot.alt;
         img.loading = 'lazy'; // Lazy load for performance
         
-        // Add click to focus/enlarge effect
-        screenshotDiv.addEventListener('click', () => {
-            // Scroll the clicked screenshot into view
-            screenshotDiv.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-                inline: 'center'
-            });
-        });
-        
         screenshotDiv.appendChild(img);
         galleryContainer.appendChild(screenshotDiv);
     });
     
+    // Calculate max offset for scrolling
+    calculateMaxOffset();
+    
     // Store screenshots globally
     window.screenshots = screenshots;
+}
+
+function calculateMaxOffset() {
+    if (!galleryContainer || screenshots.length === 0) return;
+    
+    const containerWidth = galleryContainer.parentElement.offsetWidth - 32; // Account for padding
+    const screenshotWidth = 80; // Base width
+    const gap = 16; // 1rem gap
+    const totalWidth = screenshots.length * (screenshotWidth + gap) - gap;
+    
+    maxOffset = Math.max(0, totalWidth - containerWidth);
+}
+
+function updateGalleryPosition() {
+    if (galleryContainer) {
+        galleryContainer.style.transform = `translateX(-${currentOffset}px)`;
+    }
+}
+
+// Touch/Mouse events for gallery dragging
+function handleGalleryStart(e) {
+    if (screenshots.length <= 1) return;
+    
+    isDragging = true;
+    startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+    currentX = startX;
+    
+    if (galleryContainer) {
+        galleryContainer.style.transition = 'none';
+        galleryContainer.style.cursor = 'grabbing';
+    }
+}
+
+function handleGalleryMove(e) {
+    if (!isDragging) return;
+    
+    e.preventDefault();
+    currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+    const diffX = startX - currentX;
+    const newOffset = currentOffset + diffX;
+    
+    // Constrain to bounds
+    const constrainedOffset = Math.max(0, Math.min(newOffset, maxOffset));
+    
+    if (galleryContainer) {
+        galleryContainer.style.transform = `translateX(-${constrainedOffset}px)`;
+    }
+}
+
+function handleGalleryEnd() {
+    if (!isDragging) return;
+    
+    isDragging = false;
+    const diffX = startX - currentX;
+    const threshold = 30;
+    
+    if (galleryContainer) {
+        galleryContainer.style.transition = 'transform 0.3s ease';
+        galleryContainer.style.cursor = 'grab';
+    }
+    
+    // Update current offset based on drag
+    currentOffset = Math.max(0, Math.min(currentOffset + diffX, maxOffset));
+    updateGalleryPosition();
 }
 
 // Initialize gallery with dynamic screenshots
@@ -93,6 +155,7 @@ async function initializeGallery() {
         screenshots = await loadScreenshots();
         if (screenshots.length > 0) {
             createGallery(screenshots);
+            setupGalleryEvents();
             console.log(`Loaded ${screenshots.length} screenshots`);
         } else {
             console.warn('No screenshots found. Make sure your images are named modern1.jpg, modern2.jpg, etc.');
@@ -102,6 +165,30 @@ async function initializeGallery() {
     } catch (error) {
         console.error('Error loading screenshots:', error);
     }
+}
+
+function setupGalleryEvents() {
+    if (!galleryContainer) return;
+    
+    // Mouse events
+    galleryContainer.addEventListener('mousedown', handleGalleryStart);
+    document.addEventListener('mousemove', handleGalleryMove);
+    document.addEventListener('mouseup', handleGalleryEnd);
+    
+    // Touch events
+    galleryContainer.addEventListener('touchstart', handleGalleryStart, { passive: false });
+    document.addEventListener('touchmove', handleGalleryMove, { passive: false });
+    document.addEventListener('touchend', handleGalleryEnd);
+    
+    // Prevent context menu
+    galleryContainer.addEventListener('contextmenu', e => e.preventDefault());
+    
+    // Recalculate on window resize
+    window.addEventListener('resize', () => {
+        calculateMaxOffset();
+        currentOffset = Math.min(currentOffset, maxOffset);
+        updateGalleryPosition();
+    });
 }
 
 // Old slider functionality (keeping for compatibility)
