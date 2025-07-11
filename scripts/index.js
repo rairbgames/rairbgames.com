@@ -1,4 +1,3 @@
-<script>
 let currentSlideIndex = 0;
 const slides = document.querySelectorAll('.screenshot-slide');
 const dots = document.querySelectorAll('.dot');
@@ -28,10 +27,12 @@ function currentSlide(index) {
     showSlide(currentSlideIndex);
 }
 
+// Auto-advance slider
 setInterval(() => {
     changeSlide(1);
 }, 5000);
 
+// Smooth scrolling
 function scrollToSection(sectionId) {
     const section = document.getElementById(sectionId);
     if (section) {
@@ -59,6 +60,7 @@ window.onclick = function(event) {
     }
 }
 
+// Navbar scroll effect
 window.addEventListener('scroll', function() {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 50) {
@@ -68,7 +70,9 @@ window.addEventListener('scroll', function() {
     }
 });
 
+// Add some interactive elements
 document.addEventListener('DOMContentLoaded', function() {
+    // Add click animation to buttons
     const buttons = document.querySelectorAll('button, .game-btn, .email-btn');
     buttons.forEach(button => {
         button.addEventListener('click', function() {
@@ -79,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Add hover effects to game cards
     const gameCards = document.querySelectorAll('.game-card');
     gameCards.forEach(card => {
         card.addEventListener('mouseenter', function() {
@@ -90,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Parallax effect for floating orbs
     window.addEventListener('scroll', function() {
         const scrolled = window.pageYOffset;
         const parallaxElements = document.querySelectorAll('.floating-orb');
@@ -102,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Add some game-like particle effects
 function createParticle(x, y) {
     const particle = document.createElement('div');
     particle.style.position = 'absolute';
@@ -115,7 +122,8 @@ function createParticle(x, y) {
     particle.style.zIndex = '999';
     
     document.body.appendChild(particle);
-  
+    
+    // Animate particle
     const angle = Math.random() * Math.PI * 2;
     const velocity = Math.random() * 100 + 50;
     const vx = Math.cos(angle) * velocity;
@@ -146,6 +154,7 @@ function createParticle(x, y) {
     animateParticle();
 }
 
+// Add particle effect to CTA button
 document.addEventListener('DOMContentLoaded', function() {
     const ctaBtn = document.querySelector('.cta-btn');
     if (ctaBtn) {
@@ -153,7 +162,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const rect = this.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-
+            
+            // Create multiple particles
             for (let i = 0; i < 8; i++) {
                 setTimeout(() => {
                     createParticle(
@@ -165,4 +175,3 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-</script>
