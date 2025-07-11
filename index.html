@@ -62,41 +62,12 @@
                 </div>
                 
                 <div class="game-showcase">
-                    <div class="screenshot-slider">
-                        <div class="screenshot-container">
-                            <div class="screenshot-slide active" data-slide="0">
-                                <div class="screenshot-placeholder">
-                                    <div class="placeholder-content">
-                                        <h4>Thing Tapper</h4>
-                                        <p>Screenshot 1</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="screenshot-slide" data-slide="1">
-                                <div class="screenshot-placeholder">
-                                    <div class="placeholder-content">
-                                        <h4>Thing Tapper</h4>
-                                        <p>Screenshot 2</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="screenshot-slide" data-slide="2">
-                                <div class="screenshot-placeholder">
-                                    <div class="placeholder-content">
-                                        <h4>Thing Tapper</h4>
-                                        <p>Screenshot 3</p>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="mobile-screenshot-slider">
+                        <div class="mobile-slider-container" id="mobileSliderContainer">
+                            <!-- Screenshots will be dynamically loaded here -->
                         </div>
-                        <div class="slider-controls">
-                            <button class="slider-btn prev" onclick="changeSlide(-1)">‹</button>
-                            <div class="slider-dots">
-                                <span class="dot active" onclick="currentSlide(1)"></span>
-                                <span class="dot" onclick="currentSlide(2)"></span>
-                                <span class="dot" onclick="currentSlide(3)"></span>
-                            </div>
-                            <button class="slider-btn next" onclick="changeSlide(1)">›</button>
+                        <div class="mobile-slider-dots" id="mobileSliderDots">
+                            <!-- Dots will be dynamically created here -->
                         </div>
                     </div>
                 </div>
