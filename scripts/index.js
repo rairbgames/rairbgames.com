@@ -1,14 +1,7 @@
-// Dynamic Screenshot Loader and Mobile Slider functionality
-let currentMobileSlide = 0;
-let startX = 0;
-let currentX = 0;
-let isDragging = false;
-let startTime = 0;
-let mobileSliderInterval;
+// Dynamic Screenshot Gallery Loader
 let screenshots = [];
 
-const mobileSliderContainer = document.getElementById('mobileSliderContainer');
-const mobileSliderDots = document.getElementById('mobileSliderDots');
+const galleryContainer = document.getElementById('galleryContainer');
 
 // Function to load screenshots dynamically
 async function loadScreenshots() {
@@ -61,192 +54,54 @@ async function loadScreenshots() {
     return screenshotList;
 }
 
-// Function to create slider HTML dynamically
-function createSlider(screenshots) {
+// Function to create gallery HTML dynamically
+function createGallery(screenshots) {
     // Clear existing content
-    mobileSliderContainer.innerHTML = '';
-    mobileSliderDots.innerHTML = '';
+    galleryContainer.innerHTML = '';
     
-    // Create slides
+    // Create screenshot containers
     screenshots.forEach((screenshot, index) => {
-        // Create slide
-        const slide = document.createElement('div');
-        slide.className = 'mobile-slide';
+        const screenshotDiv = document.createElement('div');
+        screenshotDiv.className = 'gallery-screenshot';
         
         const img = document.createElement('img');
         img.src = screenshot.src;
         img.alt = screenshot.alt;
-        img.className = 'mobile-screenshot';
         img.loading = 'lazy'; // Lazy load for performance
         
-        slide.appendChild(img);
-        mobileSliderContainer.appendChild(slide);
-        
-        // Create dot
-        const dot = document.createElement('span');
-        dot.className = `mobile-dot ${index === 0 ? 'active' : ''}`;
-        dot.dataset.slide = index;
-        dot.addEventListener('click', () => {
-            goToMobileSlide(index);
-            resetAutoAdvance();
+        // Add click to focus/enlarge effect
+        screenshotDiv.addEventListener('click', () => {
+            // Scroll the clicked screenshot into view
+            screenshotDiv.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+                inline: 'center'
+            });
         });
         
-        mobileSliderDots.appendChild(dot);
+        screenshotDiv.appendChild(img);
+        galleryContainer.appendChild(screenshotDiv);
     });
     
     // Store screenshots globally
     window.screenshots = screenshots;
 }
 
-// Initialize slider with dynamic screenshots
-async function initializeSlider() {
+// Initialize gallery with dynamic screenshots
+async function initializeGallery() {
     try {
         screenshots = await loadScreenshots();
         if (screenshots.length > 0) {
-            createSlider(screenshots);
-            setupSliderEvents();
-            startAutoAdvance();
+            createGallery(screenshots);
             console.log(`Loaded ${screenshots.length} screenshots`);
         } else {
             console.warn('No screenshots found. Make sure your images are named modern1.jpg, modern2.jpg, etc.');
+            // Show a placeholder message
+            galleryContainer.innerHTML = '<div style="color: rgba(255,255,255,0.6); padding: 2rem; text-align: center; font-style: italic;">No screenshots available</div>';
         }
     } catch (error) {
         console.error('Error loading screenshots:', error);
     }
-}
-
-function updateMobileSlider() {
-    if (mobileSliderContainer && screenshots.length > 0) {
-        const translateX = -currentMobileSlide * 100;
-        mobileSliderContainer.style.transform = `translateX(${translateX}%)`;
-        
-        // Update dots
-        const dots = document.querySelectorAll('.mobile-dot');
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentMobileSlide);
-        });
-    }
-}
-
-function goToMobileSlide(index) {
-    if (screenshots.length === 0) return;
-    currentMobileSlide = Math.max(0, Math.min(index, screenshots.length - 1));
-    updateMobileSlider();
-}
-
-function nextMobileSlide() {
-    if (screenshots.length === 0) return;
-    if (currentMobileSlide < screenshots.length - 1) {
-        goToMobileSlide(currentMobileSlide + 1);
-    } else {
-        goToMobileSlide(0); // Loop back to first
-    }
-}
-
-function prevMobileSlide() {
-    if (screenshots.length === 0) return;
-    if (currentMobileSlide > 0) {
-        goToMobileSlide(currentMobileSlide - 1);
-    } else {
-        goToMobileSlide(screenshots.length - 1); // Loop to last
-    }
-}
-
-function startAutoAdvance() {
-    if (screenshots.length <= 1) return; // Don't auto-advance if only one image
-    
-    mobileSliderInterval = setInterval(() => {
-        nextMobileSlide();
-    }, 5000);
-}
-
-function resetAutoAdvance() {
-    clearInterval(mobileSliderInterval);
-    startAutoAdvance();
-}
-
-// Touch/Mouse events for mobile slider
-function handleStart(e) {
-    if (screenshots.length <= 1) return;
-    
-    isDragging = true;
-    startTime = Date.now();
-    startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
-    currentX = startX;
-    
-    if (mobileSliderContainer) {
-        mobileSliderContainer.style.transition = 'none';
-        mobileSliderContainer.style.cursor = 'grabbing';
-    }
-}
-
-function handleMove(e) {
-    if (!isDragging || screenshots.length <= 1) return;
-    
-    e.preventDefault();
-    currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
-    const diffX = currentX - startX;
-    const containerWidth = mobileSliderContainer.offsetWidth;
-    const dragPercentage = (diffX / containerWidth) * 100;
-    
-    const baseTranslateX = -currentMobileSlide * 100;
-    const newTranslateX = baseTranslateX + dragPercentage;
-    
-    if (mobileSliderContainer) {
-        mobileSliderContainer.style.transform = `translateX(${newTranslateX}%)`;
-    }
-}
-
-function handleEnd() {
-    if (!isDragging || screenshots.length <= 1) return;
-    
-    isDragging = false;
-    const diffX = currentX - startX;
-    const threshold = 50;
-    const timeDiff = Date.now() - startTime;
-    const isQuickSwipe = timeDiff < 300;
-    
-    if (mobileSliderContainer) {
-        mobileSliderContainer.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)';
-        mobileSliderContainer.style.cursor = 'grab';
-    }
-    
-    if (Math.abs(diffX) > threshold || (isQuickSwipe && Math.abs(diffX) > 20)) {
-        if (diffX > 0) {
-            prevMobileSlide();
-        } else if (diffX < 0) {
-            nextMobileSlide();
-        }
-        resetAutoAdvance();
-    } else {
-        updateMobileSlider();
-    }
-}
-
-function setupSliderEvents() {
-    if (!mobileSliderContainer) return;
-    
-    // Mouse events
-    mobileSliderContainer.addEventListener('mousedown', handleStart);
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleEnd);
-    
-    // Touch events
-    mobileSliderContainer.addEventListener('touchstart', handleStart, { passive: false });
-    document.addEventListener('touchmove', handleMove, { passive: false });
-    document.addEventListener('touchend', handleEnd);
-    
-    // Prevent context menu on long press
-    mobileSliderContainer.addEventListener('contextmenu', e => e.preventDefault());
-    
-    // Pause auto-advance on hover
-    mobileSliderContainer.addEventListener('mouseenter', () => {
-        clearInterval(mobileSliderInterval);
-    });
-    
-    mobileSliderContainer.addEventListener('mouseleave', () => {
-        startAutoAdvance();
-    });
 }
 
 // Old slider functionality (keeping for compatibility)
@@ -323,8 +178,8 @@ window.addEventListener('scroll', function() {
 
 // Add some interactive elements
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the dynamic screenshot slider
-    initializeSlider();
+    // Initialize the dynamic screenshot gallery
+    initializeGallery();
 
     // Add click animation to buttons
     const buttons = document.querySelectorAll('button, .game-btn, .email-btn');
