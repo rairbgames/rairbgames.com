@@ -356,11 +356,11 @@ body {
 .gallery-screenshot {
     flex: 0 0 auto;
     width: 120px;
-    height: 213px; /* 16:9 aspect ratio flipped for portrait */
+    height: 240px;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    pointer-events: none; /* Prevent interaction with individual images */
+    pointer-events: none;
 }
 
 .gallery-screenshot img {
