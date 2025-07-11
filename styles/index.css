@@ -118,6 +118,55 @@ body {
     border-color: #ffffff;
 }
 
+.discord-navbar-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 2px solid #333;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-width: 40px;
+    height: 40px;
+}
+
+.discord-navbar-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.discord-navbar-link:hover::before {
+    left: 100%;
+}
+
+.discord-navbar-link:hover {
+    border-color: #ffffff;
+    transform: translateY(-2px);
+    color: #ffffff;
+}
+
+.discord-navbar-link .bi-discord {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    transition: all 0.3s ease;
+}
+
+.discord-navbar-link:hover .bi-discord {
+    transform: scale(1.1);
+}
+
 /* Hero Section */
 .hero {
     height: 100vh;
