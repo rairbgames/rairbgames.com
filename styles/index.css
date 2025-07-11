@@ -252,22 +252,28 @@ body {
 }
 
 .game-card {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: center;
-    padding: 2rem;
-    border: 2px solid #333;
-    border-radius: 16px;
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
+    border: 2px solid #333;
+    border-radius: 16px;
+    padding: 2rem;
     transition: all 0.3s ease;
     animation: fadeInUp 0.8s ease-out;
 }
 
 .game-card:hover {
     border-color: #555;
-    transform: translateY(-5px);
+    transform: translateY(-5px) scale(1.02);
+}
+
+.game-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.game-info {
+    text-align: left;
 }
 
 .game-title {
@@ -325,106 +331,54 @@ body {
     font-size: 1.2rem;
 }
 
-/* Screenshot Slider */
-.screenshot-slider {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.screenshot-container {
-    position: relative;
-    height: 400px;
-}
-
-.screenshot-slide {
-    position: absolute;
+/* NEW: Horizontal Screenshot Gallery Styles */
+.screenshot-gallery {
     width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 0.5s ease;
+    overflow: hidden;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
+    position: relative;
 }
 
-.screenshot-slide.active {
-    opacity: 1;
+.gallery-container {
+    display: flex;
+    gap: 1rem;
+    transition: transform 0.3s ease;
+    cursor: grab;
 }
 
-.screenshot-image {
+.gallery-container:active {
+    cursor: grabbing;
+}
+
+.gallery-screenshot {
+    flex: 0 0 auto;
+    width: 200px;
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.gallery-screenshot:hover {
+    transform: scale(1.05);
+}
+
+.gallery-screenshot img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 12px;
+    display: block;
 }
 
-.screenshot-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #222, #444);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-}
-
-.placeholder-content {
-    text-align: center;
-}
-
-.placeholder-content h4 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.placeholder-content p {
-    opacity: 0.7;
-}
-
-.slider-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.7);
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-}
-
-.slider-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: #ffffff;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
-}
-
-.slider-btn:hover {
-    background: rgba(255, 255, 255, 0.4);
-    transform: scale(1.1);
-}
-
-.slider-dots {
-    display: flex;
-    gap: 8px;
-}
-
-.dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.dot.active {
-    background: #ffffff;
-    transform: scale(1.2);
+/* Mobile adjustments for gallery */
+@media (max-width: 768px) {
+    .gallery-screenshot {
+        width: 150px;
+        height: 112px;
+    }
 }
 
 /* Coming Soon Section */
