@@ -486,6 +486,88 @@ body {
     animation: pulse 2s ease-in-out infinite;
 }
 
+@media (max-width: 768px) {
+    .coming-soon {
+        padding: 60px 0;
+    }
+    
+    .teaser-card {
+        padding: 2rem 1.5rem;
+        margin: 0 10px;
+        border-radius: 12px;
+    }
+    
+    .teaser-title {
+        font-size: 1.8rem;
+        margin-bottom: 0.8rem;
+        line-height: 1.2;
+    }
+    
+    .teaser-text {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 0 0.5rem;
+        line-height: 1.6;
+    }
+    
+    .mystery-box {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .coming-soon {
+        padding: 40px 0;
+    }
+    
+    .teaser-card {
+        padding: 1.5rem 1rem;
+        margin: 0 5px;
+        border-radius: 8px;
+    }
+    
+    .teaser-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .teaser-text {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        padding: 0;
+    }
+    
+    .mystery-box {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 320px) {
+    .teaser-card {
+        padding: 1rem 0.75rem;
+        margin: 0;
+    }
+    
+    .teaser-title {
+        font-size: 1.3rem;
+    }
+    
+    .teaser-text {
+        font-size: 0.85rem;
+    }
+    
+    .mystery-box {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+}
+
 /* Contact Modal */
 .modal {
     display: none;
