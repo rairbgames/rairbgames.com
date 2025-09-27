@@ -1,0 +1,13 @@
+{
+  "id": "thing-tapper",
+  "title": "Thing Tapper",
+  "description": "I made this game as a way to combine 2 genres I've always enjoyed: Sandbox games and Idle games. The concept of an Idle game where you are given as much freedom as possible over values, where breaking the game is even encouraged. You unlock more content the more you level up (done by just playing the game) and eventually with all that content from hiring employees to moving to another timeline(???) you can put together insane combos.",
+  "storeLink": "https://play.google.com/store/apps/details?id=com.rairb.thingtapper",
+  "storeLabel": "Play on Google Play",
+  "screenshots": [
+    "assets/modern1.png",
+    "assets/modern2.png",
+    "assets/modern3.png"
+  ],
+  "icon": "assets/rairbgames.png"
+}

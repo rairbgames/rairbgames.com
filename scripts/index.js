@@ -1,62 +1,63 @@
-// Dynamic Screenshot Gallery Loader with Drag/Swipe
-let screenshots = [];
-let currentOffset = 0;
-let isDragging = false;
-let startX = 0;
-let currentX = 0;
-let maxOffset = 0;
 
-const galleryContainer = document.getElementById('galleryContainer');
-
-// Function to load screenshots dynamically
-async function loadScreenshots() {
-    const screenshotList = [];
-    let index = 1;
-    
-    // Keep trying to load screenshots until we get a 404
-    while (true) {
-        try {
-            const imagePath = `assets/modern${index}.jpg`;
-            
-            // Check if image exists by creating a new Image object
-            const img = new Image();
-            await new Promise((resolve, reject) => {
-                img.onload = resolve;
-                img.onerror = reject;
-                img.src = imagePath;
-            });
-            
-            screenshotList.push({
-                src: imagePath,
-                alt: `Thing Tapper Screenshot ${index}`
-            });
-            
-            index++;
-        } catch (error) {
-            // Try PNG format if JPG fails
-            try {
-                const imagePath = `assets/modern${index}.png`;
-                const img = new Image();
-                await new Promise((resolve, reject) => {
-                    img.onload = resolve;
-                    img.onerror = reject;
-                    img.src = imagePath;
-                });
-                
-                screenshotList.push({
-                    src: imagePath,
-                    alt: `Thing Tapper Screenshot ${index}`
-                });
-                
-                index++;
-            } catch (pngError) {
-                // No more images found, break the loop
-                break;
-            }
+// Modular Games Loader
+async function loadGamesList() {
+    const gamesListContainer = document.getElementById('games-list');
+    if (!gamesListContainer) return;
+    try {
+        const gamesIndex = await fetch('games/games.json').then(r => r.json());
+        for (const gameId of gamesIndex) {
+            const gameData = await fetch(`games/${gameId}.json`).then(r => r.json());
+            const gameElem = renderGame(gameData);
+            gamesListContainer.appendChild(gameElem);
         }
+    } catch (e) {
+        gamesListContainer.innerHTML = '<div style="color: #fff; padding: 2rem;">Failed to load games.</div>';
+        console.error('Error loading games:', e);
     }
-    
-    return screenshotList;
+}
+
+function renderGame(game) {
+    // Thing Tapper style card
+    if (game.id === 'thing-tapper') {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `
+            <div class="game-content">
+                <div class="game-info">
+                    <h3 class="game-title">${game.title}</h3>
+                    <p class="game-description">${game.description}</p>
+                    <a href="${game.storeLink}" target="_blank" class="game-btn">
+                        <span class="btn-text">${game.storeLabel}</span>
+                        <span class="btn-icon">🎮</span>
+                    </a>
+                </div>
+                <div class="screenshot-gallery">
+                    <div class="gallery-container">
+                        ${game.screenshots.map(src => `<div class='gallery-screenshot'><img src='${src}' alt='Screenshot' loading='lazy' draggable='false'></div>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+        return card;
+    }
+    // Void Jumper teaser style
+    if (game.id === 'void-jumper') {
+        const teaser = document.createElement('div');
+        teaser.className = 'teaser-card';
+        teaser.innerHTML = `
+            <img class="teaser-art" src="${game.teaserArt}" alt="Teaser Art" width="315" height="315" />
+            <h2 class="teaser-title">${game.title}</h2>
+            <p class="teaser-text">${game.description}</p>
+            <div class="teaser-decoration">
+                <div class="mystery-box">${game.release || ''}</div>
+            </div>
+        `;
+        return teaser;
+    }
+    // Fallback
+    const fallback = document.createElement('div');
+    fallback.textContent = game.title || 'Unknown Game';
+    return fallback;
 }
 
 // Function to create gallery HTML dynamically
@@ -277,10 +278,11 @@ window.addEventListener('scroll', function() {
     }
 });
 
+
 // Add some interactive elements
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the dynamic screenshot gallery
-    initializeGallery();
+    // Load modular games
+    loadGamesList();
 
     // Add click animation to buttons
     const buttons = document.querySelectorAll('button, .game-btn, .email-btn');
@@ -290,18 +292,6 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 this.style.transform = '';
             }, 150);
-        });
-    });
-
-    // Add hover effects to game cards
-    const gameCards = document.querySelectorAll('.game-card');
-    gameCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px) scale(1.02)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
         });
     });
 

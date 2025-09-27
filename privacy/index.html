@@ -8,7 +8,8 @@
 </head>
 <body>
     <main class="privacy-policy">
-        <h1>Privacy Policy</h1>
+        <button class="font-toggle" id="fontToggle" type="button">Switch to System Font</button>
+    <h1>Privacy Policy</h1>
         <p>
             Effective Date: September 27, 2025
         </p>
@@ -23,5 +24,22 @@
             By using our games, you acknowledge and agree to this privacy policy. If you have any questions or concerns, please contact us at the email address provided in our game listings.
         </p>
     </main>
+    <script>
+    // Font toggle logic for privacy page
+    const fontToggle = document.getElementById('fontToggle');
+    const privacyMain = document.querySelector('.privacy-policy');
+    let usingSiteFont = true;
+    fontToggle.addEventListener('click', () => {
+        if (usingSiteFont) {
+            document.body.style.fontFamily = `system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif`;
+            fontToggle.textContent = 'Switch to Site Font';
+            usingSiteFont = false;
+        } else {
+            document.body.style.fontFamily = '';
+            fontToggle.textContent = 'Switch to System Font';
+            usingSiteFont = true;
+        }
+    });
+    </script>
 </body>
 </html>
