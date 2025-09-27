@@ -17,31 +17,8 @@ async function loadGamesList() {
 }
 
 function renderGame(game) {
-    // Thing Tapper style card
-    if (game.id === 'thing-tapper') {
-        const card = document.createElement('div');
-        card.className = 'game-card';
-        card.innerHTML = `
-            <div class="game-content">
-                <div class="game-info">
-                    <h3 class="game-title">${game.title}</h3>
-                    <p class="game-description">${game.description}</p>
-                    <a href="${game.storeLink}" target="_blank" class="game-btn">
-                        <span class="btn-text">${game.storeLabel}</span>
-                        <span class="btn-icon">🎮</span>
-                    </a>
-                </div>
-                <div class="screenshot-gallery">
-                    <div class="gallery-container">
-                        ${game.screenshots.map(src => `<div class='gallery-screenshot'><img src='${src}' alt='Screenshot' loading='lazy' draggable='false'></div>`).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
-        return card;
-    }
-    // Void Jumper teaser style
-    if (game.id === 'void-jumper') {
+    // If the game has a 'release' field, treat as teaser/upcoming
+    if (game.release) {
         const teaser = document.createElement('div');
         teaser.className = 'teaser-card';
         teaser.innerHTML = `
@@ -49,15 +26,32 @@ function renderGame(game) {
             <h2 class="teaser-title">${game.title}</h2>
             <p class="teaser-text">${game.description}</p>
             <div class="teaser-decoration">
-                <div class="mystery-box">${game.release || ''}</div>
+                <div class="mystery-box">${game.release}</div>
             </div>
         `;
         return teaser;
     }
-    // Fallback
-    const fallback = document.createElement('div');
-    fallback.textContent = game.title || 'Unknown Game';
-    return fallback;
+    // Otherwise, treat as released game (Thing Tapper style)
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.innerHTML = `
+        <div class="game-content">
+            <div class="game-info">
+                <h3 class="game-title">${game.title}</h3>
+                <p class="game-description">${game.description}</p>
+                ${game.storeLink ? `<a href="${game.storeLink}" target="_blank" class="game-btn">
+                    <span class="btn-text">${game.storeLabel || 'Play'}</span>
+                    <span class="btn-icon">🎮</span>
+                </a>` : ''}
+            </div>
+            <div class="screenshot-gallery">
+                <div class="gallery-container">
+                    ${(game.screenshots || []).map(src => `<div class='gallery-screenshot'><img src='${src}' alt='Screenshot' loading='lazy' draggable='false'></div>`).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    return card;
 }
 
 // Function to create gallery HTML dynamically
