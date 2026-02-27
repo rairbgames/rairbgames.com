@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De-fishin'</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .game-wrapper {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scale-container {
+            width: 1920px;
+            height: 1080px;
+            transform-origin: center center;
+        }
+        .clip {
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+        }
+        iframe {
+            width: 1920px;
+            height: 1080px;
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="scale-container" id="scaler">
+            <div class="clip">
+                <iframe src="https://itch.io/embed-upload/16623080?color=000000"
+                        allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <script>
+        function scaleGame() {
+            const scaler = document.getElementById('scaler');
+            const scaleX = window.innerWidth / 1920;
+            const scaleY = window.innerHeight / 1080;
+            const scale = Math.min(scaleX, scaleY);
+            scaler.style.transform = `scale(${scale})`;
+        }
+        scaleGame();
+        window.addEventListener('resize', scaleGame);
+    </script>
+</body>
+</html>
