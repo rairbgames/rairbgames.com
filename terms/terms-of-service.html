@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | rairb games</title>
+    <link rel="stylesheet" href="../styles/index.css">
+</head>
+<body>
+    <main class="terms-of-service">
+        <button class="font-toggle" id="fontToggle" type="button">Switch to System Font</button>
+        <h1>Terms of Service</h1>
+        <p>
+            Effective Date: September 27, 2025
+        </p>
+        <p>
+            These Terms of Service ("Terms") govern your access to and use of the games published by rairb games ("we", "us", or "our"), including Descension, Thing Tapper, and Mining Mania (collectively, the "Games"). By downloading, installing, or using any of the Games, you agree to be bound by these Terms. If you do not agree, please do not use the Games.
+        </p>
+
+        <h2>1. License to Use</h2>
+        <p>
+            Subject to your compliance with these Terms, we grant you a limited, non-exclusive, non-transferable, revocable license to download and use the Games for your personal, non-commercial entertainment purposes on a device that you own or control.
+        </p>
+
+        <h2>2. Prohibited Conduct</h2>
+        <p>
+            When using the Games, you agree that you will not:
+        </p>
+        <ul>
+            <li>Copy, distribute, share, sell, rent, lease, or otherwise make available the Games, or any paid or unlockable portion of the Games, to any third party;</li>
+            <li>Reverse engineer, decompile, disassemble, or otherwise attempt to derive the source code of the Games, or attempt to bypass or circumvent any technical protections applied to them;</li>
+            <li>Use the Games, or any content within the Games, to create, promote, or distribute material that is hateful, discriminatory, harassing, or intended to demean or incite violence against any individual or group;</li>
+            <li>Use the Games for any unlawful purpose, or in a manner that infringes the rights of, or restricts or inhibits the use and enjoyment of the Games by, any third party;</li>
+            <li>Introduce viruses, malware, or other harmful code, or otherwise interfere with or disrupt the operation of the Games;</li>
+            <li>Remove, obscure, or alter any proprietary notices contained in or on the Games.</li>
+        </ul>
+
+        <h2>3. Intellectual Property</h2>
+        <p>
+            The Games, including all associated names, logos, artwork, code, audio, and other content, are owned by rairb games or its licensors and are protected by copyright, trademark, and other intellectual property laws.
+        </p>
+        <p>
+            Certain assets within the Games, including but not limited to artwork, music, sound effects, or other media, may be sourced from third parties, including public-domain or CC0-licensed works, or works used with the permission of their respective creators. rairb games does not claim ownership of such third-party assets. Except for the limited license granted above, no rights in the Games, including any such third-party assets, are transferred to you under these Terms.
+        </p>
+
+        <h2>4. Third-Party Services</h2>
+        <p>
+            The Games may display advertisements or include features provided by third-party services, such as Google AdMob. Your interaction with any third-party service is governed by that service's own terms and privacy policy. Please refer to our <a href="https://rairbgames.com/privacy">Privacy Policy</a> for further details.
+        </p>
+
+        <h2>5. Disclaimer of Warranties</h2>
+        <p>
+            The Games are provided "as is" and "as available," without warranties of any kind, whether express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the Games will be uninterrupted, error-free, or free of harmful components.
+        </p>
+
+        <h2>6. Limitation of Liability</h2>
+        <p>
+            To the fullest extent permitted by applicable law, rairb games shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, use, or goodwill, arising out of or in connection with your use of, or inability to use, the Games.
+        </p>
+
+        <h2>7. Termination</h2>
+        <p>
+            We reserve the right to suspend or terminate your access to any Game at any time, without notice, if we believe you have violated these Terms.
+        </p>
+
+        <h2>8. Changes to These Terms</h2>
+        <p>
+            We may update these Terms from time to time. Any changes will be posted on this page with a revised effective date. Your continued use of the Games after any changes constitutes your acceptance of the updated Terms.
+        </p>
+
+        <h2>9. Governing Law</h2>
+        <p>
+            These Terms shall be governed by and construed in accordance with the laws of the State of West Virginia, without regard to its conflict of law principles.
+        </p>
+
+        <h2>10. Contact Us</h2>
+        <p>
+            If you have any questions, concerns, or complaints regarding these Terms, please contact us at
+            <a href="mailto:rairb@rairbgames.com">rairb@rairbgames.com</a>.
+        </p>
+    </main>
+    <script>
+    // Font toggle logic for terms of service page
+    const fontToggle = document.getElementById('fontToggle');
+    const termsMain = document.querySelector('.terms-of-service');
+    let usingSiteFont = true;
+    fontToggle.addEventListener('click', () => {
+        if (usingSiteFont) {
+            document.body.style.fontFamily = `system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif`;
+            fontToggle.textContent = 'Switch to Site Font';
+            usingSiteFont = false;
+        } else {
+            document.body.style.fontFamily = '';
+            fontToggle.textContent = 'Switch to System Font';
+            usingSiteFont = true;
+        }
+    });
+    </script>
+</body>
+</html>
