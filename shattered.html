@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The length of the achivement.</title>
+    <title>The quest description hides a key.</title>
     <link rel="stylesheet" href="styles/index.css">
 </head>
 <body>
@@ -11,14 +11,9 @@
         <h1 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Oops, can't find that one.</h1>
 
         <textarea
-            placeholder="Znk GHEYY oy kbkxecnkxk, e'qtuc.
-Znkxk'y g ykixkz jkham skta ot znk mgsk O's tuz yavvuykj zu zkrr eua ghuaz. 
-
-Ol eua vxkyy gtj nurj ynolz, 3, 6, gtj ktzkx (ot zngz uxjkx) eua corr ykk oz.
-
-Eua ngbk zu atinkiq znk yngzzkxkj uvzout yu znk tgxxgzux luxmkzy zngz eua lgorkj znk zazuxogr. Nk utre xkskshkxy jgzg, lux nk oy payz znk mgsk. 
-
-Sgqk nos lkkr hgj lux eua gtj eua corr mkz znk arzosgzk vxofk."
+            id="mystery-box"
+            placeholder=""
+            readonly
             style="
                 width: 90%;
                 max-width: 700px;
@@ -40,5 +35,49 @@ Sgqk nos lkkr hgj lux eua gtj eua corr mkz znk arzosgzk vxofk."
             <span class="btn-arrow">→</span>
         </button>
     </main>
+
+    <script>
+        (function () {
+            const DELAY_MS = 30000;
+            const TYPE_SPEED_MS = 35;
+
+            const message = `Znk GHEYY oy kbkxecnkxk, e'qtuc.
+Znkxk'y g ykixkz jkham skta ot znk mgsk O's tuz yavvuykj zu zkrr eua ghuaz.
+
+Ol eua vxkyy gtj nurj ynolz, 3, 6, gtj ktzkx (ot zngz uxjkx) eua corr ykk oz.
+
+Eua ngbk zu atinkiq znk yngzzkxkj uvzout yu znk tgxxgzux luxmkzy zngz eua lgorkj znk zazuxogr. Nk utre xkskshkxy jgzg, lux nk oy payz znk mgsk.
+
+Sgqk nos lkkr hgj lux eua gtj eua corr mkz znk arzosgzk vxofk.`;
+
+            const box = document.getElementById('mystery-box');
+
+            box.addEventListener('mousedown', function (e) {
+                e.preventDefault();
+                box.blur();
+                alert('Access denied');
+            });
+
+            box.addEventListener('focus', function () {
+                box.blur();
+            });
+
+            function typeMessage() {
+                let i = 0;
+                box.value = '';
+
+                function typeNextChar() {
+                    if (i < message.length) {
+                        box.value += message.charAt(i);
+                        i++;
+                        setTimeout(typeNextChar, TYPE_SPEED_MS);
+                    }
+                }
+                typeNextChar();
+            }
+
+            setTimeout(typeMessage, DELAY_MS);
+        })();
+    </script>
 </body>
 </html>
