@@ -9,73 +9,17 @@
 <body>
     <main class="not-found-container" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #000; color: #fff;">
         <h1 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Oops, can't find that one.</h1>
-
-        <textarea
-            id="mystery-box"
-            placeholder=""
-            readonly
-            style="
-                width: 90%;
-                max-width: 700px;
-                min-height: 250px;
-                margin-bottom: 1.5rem;
-                padding: 1rem;
-                font-size: 1rem;
-                font-family: inherit;
-                background: #111;
-                color: #fff;
-                border: 1px solid #444;
-                border-radius: 8px;
-                resize: vertical;
-            "
-        ></textarea>
         <p style="color:black;">Shift them. Your key is within arm's length.</p>
+        <p style="color:black;">ot uxjkx, vxkyy
+"123kruv"
+
+eua sge ngbk zu xkyzgxz znk mgsk
+oz zgqky g ruz zu sgqk sk xkskshkx
+cne os nkxk</p>
         <button class="cta-btn" onclick="window.location.href='/'" style="display: flex; align-items: center; gap: 0.5em;">
             Return to Homepage
             <span class="btn-arrow">→</span>
         </button>
     </main>
-
-    <script>
-        (function () {
-            const DELAY_MS = 30000;
-            const TYPE_SPEED_MS = 35;
-
-            const message = `ot uxjkx, vxkyy
-"123kruv"
-
-eua sge ngbk zu xkyzgxz znk mgsk
-oz zgqky g ruz zu sgqk sk xkskshkx
-cne os nkxk`;
-
-            const box = document.getElementById('mystery-box');
-
-            box.addEventListener('mousedown', function (e) {
-                e.preventDefault();
-                box.blur();
-                alert('Access denied');
-            });
-
-            box.addEventListener('focus', function () {
-                box.blur();
-            });
-
-            function typeMessage() {
-                let i = 0;
-                box.value = '';
-
-                function typeNextChar() {
-                    if (i < message.length) {
-                        box.value += message.charAt(i);
-                        i++;
-                        setTimeout(typeNextChar, TYPE_SPEED_MS);
-                    }
-                }
-                typeNextChar();
-            }
-
-            setTimeout(typeMessage, DELAY_MS);
-        })();
-    </script>
 </body>
 </html>
