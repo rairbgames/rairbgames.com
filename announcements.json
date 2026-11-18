@@ -1,6 +1,12 @@
 {
-  "version": 3,
+  "version": 4,
   "announcements": [
+    {
+      "id": "a-mwmlnwcp",
+      "title": "Jarona!",
+      "body": "Like that one guy says!",
+      "created": "2026-11-18T20:54:47.689Z"
+    },
     {
       "id": "a-mwmkrdr3",
       "title": "It works!",
@@ -8,5 +14,5 @@
       "created": "2026-11-18T20:29:30.591Z"
     }
   ],
-  "updated": "2026-11-18T20:29:53.742Z"
+  "updated": "2026-11-18T20:54:47.689Z"
 }
