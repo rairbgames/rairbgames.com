@@ -1,1 +1,12 @@
-{ "version": 0, "announcements": [] }
+{
+  "version": 1,
+  "announcements": [
+    {
+      "id": "a-mwmko37t",
+      "title": "aRGi update test thing",
+      "body": "Hey, is this thing on???",
+      "created": "2026-11-18T20:26:56.969Z"
+    }
+  ],
+  "updated": "2026-11-18T20:26:56.969Z"
+}
