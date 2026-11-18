@@ -1,6 +1,12 @@
 {
-  "version": 1,
+  "version": 2,
   "announcements": [
+    {
+      "id": "a-mwmkrdr3",
+      "title": "It works!",
+      "body": "The widget is functioning I am the best",
+      "created": "2026-11-18T20:29:30.591Z"
+    },
     {
       "id": "a-mwmko37t",
       "title": "aRGi update test thing",
@@ -8,5 +14,5 @@
       "created": "2026-11-18T20:26:56.969Z"
     }
   ],
-  "updated": "2026-11-18T20:26:56.969Z"
+  "updated": "2026-11-18T20:29:30.591Z"
 }
