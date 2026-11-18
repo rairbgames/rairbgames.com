@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Announcements admin</title>
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#f3f1ee; --panel:#ffffff; --text:#1c1b1a; --muted:#6b6862; --line:#d8d4cd;
+  --accent:#1f5f5b; --accent-text:#ffffff; --danger:#b3261e; --warn-bg:#fbf1d9; --ok:#1f6b3a;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#171716; --panel:#201f1e; --text:#ecebe8; --muted:#9a968f; --line:#35332f;
+        --accent:#6fc2bb; --accent-text:#0d2523; --danger:#f2938c; --warn-bg:#3a3220; --ok:#7fd49b}
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:1.25rem}
+main{max-width:46rem;margin:0 auto;display:grid;gap:1.25rem}
+h1{font-size:1.5rem;margin:0 0 .25rem;letter-spacing:-.01em}
+h2{font-size:1.05rem;margin:0 0 .75rem}
+p{margin:0}
+.muted{color:var(--muted);font-size:.9rem}
+section{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1.1rem}
+label{display:block;font-size:.88rem;font-weight:600;margin:.8rem 0 .25rem}
+input,textarea{width:100%;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:.5rem .6rem}
+textarea{min-height:6rem;resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media (max-width:34rem){.row{grid-template-columns:1fr}}
+.check{display:flex;gap:.5rem;align-items:center;font-weight:400;margin-top:.7rem}
+.check input{width:auto}
+button{font:inherit;font-weight:600;border-radius:4px;padding:.5rem .95rem;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer}
+button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+button.danger{color:var(--danger)}
+button:disabled{opacity:.55;cursor:default}
+.actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+#status{min-height:1.4rem;font-size:.92rem}
+#status.err{color:var(--danger)} #status.ok{color:var(--ok)}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
+li{border:1px solid var(--line);border-radius:4px;padding:.75rem .85rem;display:grid;grid-template-columns:1fr auto;gap:.25rem .75rem}
+li h3{margin:0;font-size:1rem}
+li .body{grid-column:1;white-space:pre-wrap;font-size:.92rem}
+li .meta{grid-column:1;font-size:.82rem;color:var(--muted)}
+li button{grid-column:2;grid-row:1 / span 3;align-self:start}
+li.expired{opacity:.65}
+.tag{background:var(--warn-bg);border-radius:3px;padding:0 .35rem;margin-left:.4rem;font-size:.78rem;font-weight:600}
+details summary{cursor:pointer;font-weight:600}
+details p{margin-top:.6rem}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Announcements admin</h1>
+  </header>
+
+  <section>
+    <h2>Connect to GitHub</h2>
+    <label for="token">Access token</label>
+    <input id="token" type="password" autocomplete="off" placeholder="github_pat_…">
+    <label class="check"><input id="remember" type="checkbox"> Remember the token on this device</label>
+    <details>
+      <summary>How to create a token</summary>
+      <p class="muted">GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token</p>
+    </details>
+    <details>
+      <summary>Repository settings</summary>
+      <div class="row">
+        <div><label for="owner">Owner</label><input id="owner" value="rairbgames"></div>
+        <div><label for="repo">Repository</label><input id="repo" value="rairbgames.com"></div>
+        <div><label for="branch">Branch</label><input id="branch" value="main"></div>
+        <div><label for="path">File path</label><input id="path" value="announcements.json"></div>
+      </div>
+    </details>
+    <div class="actions"><button id="loadBtn" class="primary">Load announcements</button></div>
+  </section>
+
+  <section id="editor" hidden>
+    <h2>New announcement</h2>
+    <label for="title">Title</label>
+    <input id="title" maxlength="80">
+    <label for="body">Message</label>
+    <textarea id="body" maxlength="500"></textarea>
+    <label for="expires">Expires (optional)</label>
+    <input id="expires" type="datetime-local">
+    <div class="actions"><button id="addBtn" class="primary">Publish announcement</button></div>
+  </section>
+
+  <section id="listPanel" hidden>
+    <h2>Live announcements</h2>
+    <ul id="list"></ul>
+    <div class="actions"><button id="pruneBtn">Remove expired</button></div>
+  </section>
+
+  <p id="status" role="status" aria-live="polite"></p>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const CFG = ['owner','repo','branch','path'];
+let sha = null;
+let data = { version: 0, announcements: [] };
+
+function status(msg, kind){ const s=$('status'); s.textContent=msg; s.className=kind||''; }
+function busy(on){ document.querySelectorAll('button').forEach(b=>b.disabled=on); }
+
+function fileUrl(){
+  const p = $('path').value.trim().replace(/^\/+/, '');
+  return `https://api.github.com/repos/${$('owner').value.trim()}/${$('repo').value.trim()}/contents/${p}`;
+}
+function headers(){
+  return {
+    'Authorization': 'Bearer ' + $('token').value.trim(),
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+}
+function b64enc(str){
+  let bin = ''; new TextEncoder().encode(str).forEach(c => bin += String.fromCharCode(c));
+  return btoa(bin);
+}
+function b64dec(b64){
+  const bin = atob(b64.replace(/\s/g, ''));
+  return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
+}
+
+function saveSettings(){
+  try{
+    CFG.forEach(k => localStorage.setItem('ann_' + k, $(k).value.trim()));
+    if ($('remember').checked) localStorage.setItem('ann_token', $('token').value.trim());
+    else localStorage.removeItem('ann_token');
+  }catch(e){}
+}
+function restoreSettings(){
+  try{
+    CFG.forEach(k => { const v = localStorage.getItem('ann_' + k); if (v) $(k).value = v; });
+    const t = localStorage.getItem('ann_token');
+    if (t){ $('token').value = t; $('remember').checked = true; }
+  }catch(e){}
+  $('pathLabel').textContent = $('path').value;
+}
+
+async function load(){
+  if (!$('token').value.trim()) return status('Enter your access token first.', 'err');
+  saveSettings(); busy(true); status('Loading…');
+  try{
+    const res = await fetch(fileUrl() + '?ref=' + encodeURIComponent($('branch').value.trim()), { headers: headers(), cache: 'no-store' });
+    if (res.status === 404){
+      sha = null; data = { version: 0, announcements: [] };
+      status('No announcements file yet. It will be created when you publish.', 'ok');
+    } else if (res.status === 401){
+      return status('GitHub rejected the token. Check it has not expired.', 'err');
+    } else if (!res.ok){
+      return status('Could not load the file (' + res.status + ').', 'err');
+    } else {
+      const j = await res.json(); sha = j.sha;
+      try{
+        data = JSON.parse(b64dec(j.content));
+        if (!Array.isArray(data.announcements)) data.announcements = [];
+      }catch(e){ return status('The file exists but is not valid JSON. Fix it in GitHub first.', 'err'); }
+      status('Loaded ' + data.announcements.length + ' announcement(s).', 'ok');
+    }
+    $('editor').hidden = false; $('listPanel').hidden = false; render();
+  }catch(e){ status('Network error. Check your connection and try again.', 'err'); }
+  finally{ busy(false); }
+}
+
+async function commit(message){
+  data.version = (Number(data.version) || 0) + 1;
+  data.updated = new Date().toISOString();
+  const body = { message, branch: $('branch').value.trim(), content: b64enc(JSON.stringify(data, null, 2) + '\n') };
+  if (sha) body.sha = sha;
+  const res = await fetch(fileUrl(), { method: 'PUT', headers: { ...headers(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (res.status === 409 || res.status === 422){ status('The file changed on GitHub since you loaded it. Load again, then retry.', 'err'); return false; }
+  if (res.status === 403 || res.status === 404){ status('GitHub denied the save. The token needs Contents: Read and write on this repo.', 'err'); return false; }
+  if (!res.ok){ status('Save failed (' + res.status + ').', 'err'); return false; }
+  sha = (await res.json()).content.sha;
+  return true;
+}
+
+function render(){
+  const ul = $('list'); ul.replaceChildren();
+  const now = Date.now();
+  if (!data.announcements.length){
+    const li = document.createElement('li'); li.textContent = 'Nothing published yet.'; ul.append(li); return;
+  }
+  data.announcements.forEach(a => {
+    const expired = a.expires && new Date(a.expires).getTime() < now;
+    const li = document.createElement('li'); if (expired) li.className = 'expired';
+    const h = document.createElement('h3'); h.textContent = a.title || '(untitled)';
+    if (expired){ const t = document.createElement('span'); t.className = 'tag'; t.textContent = 'Expired'; h.append(t); }
+    const b = document.createElement('div'); b.className = 'body'; b.textContent = a.body || '';
+    const m = document.createElement('div'); m.className = 'meta';
+    m.textContent = a.expires ? 'Expires ' + new Date(a.expires).toLocaleString() : 'No expiry';
+    const del = document.createElement('button'); del.className = 'danger'; del.textContent = 'Delete';
+    del.onclick = () => removeWhere(x => x.id === a.id, 'Delete “' + (a.title || 'untitled') + '”?');
+    li.append(h, b, m, del); ul.append(li);
+  });
+}
+
+async function removeWhere(fn, confirmMsg){
+  if (confirmMsg && !confirm(confirmMsg)) return;
+  const before = data.announcements;
+  data.announcements = before.filter(a => !fn(a));
+  if (data.announcements.length === before.length) return status('Nothing to remove.');
+  busy(true); status('Saving…');
+  try{
+    if (await commit('Remove announcement(s)')){ status('Deleted. The site updates in a minute or two.', 'ok'); }
+    else data.announcements = before;
+  }catch(e){ data.announcements = before; status('Network error. Nothing was saved.', 'err'); }
+  finally{ busy(false); render(); }
+}
+
+async function add(){
+  const title = $('title').value.trim(), msg = $('body').value.trim();
+  if (!title || !msg) return status('Add a title and a message.', 'err');
+  const entry = { id: 'a-' + Date.now().toString(36), title, body: msg, created: new Date().toISOString() };
+  if ($('expires').value) entry.expires = new Date($('expires').value).toISOString();
+  const before = data.announcements;
+  data.announcements = [entry, ...before];
+  busy(true); status('Publishing…');
+  try{
+    if (await commit('Add announcement: ' + title.slice(0, 50))){
+      $('title').value = ''; $('body').value = ''; $('expires').value = '';
+      status('Published. The site updates in a minute or two.', 'ok');
+    } else data.announcements = before;
+  }catch(e){ data.announcements = before; status('Network error. Nothing was saved.', 'err'); }
+  finally{ busy(false); render(); }
+}
+
+$('loadBtn').onclick = load;
+$('addBtn').onclick = add;
+$('pruneBtn').onclick = () => removeWhere(a => a.expires && new Date(a.expires).getTime() < Date.now(), 'Remove all expired announcements?');
+$('path').oninput = () => $('pathLabel').textContent = $('path').value;
+restoreSettings();
+</script>
+</body>
+</html>
